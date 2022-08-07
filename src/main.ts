@@ -6,7 +6,8 @@ import { createWebDriver, takeScreenshot, untilDelay } from "./webdriver.js";
 import { deobfuscateScript } from "./deobfuscator.js";
 import { logger } from "./logger.js";
 
-const webpageLoadDelay = Number.parseInt(process.env.WEBPAGE_LOAD_DELAY_MS) || 15*1000;
+const webpageLoadDelay =
+  Number.parseInt(process.env.WEBPAGE_LOAD_DELAY_MS) || 15 * 1000;
 
 async function scan(webpages: Array<string>) {
   let seleniumServer: StartedTestContainer;
@@ -26,7 +27,7 @@ async function scan(webpages: Array<string>) {
       await driver.get(webpageURL.href);
 
       // wait a couple seconds, so all the sripts will be loaded
-      logger.info("waiting for web page at %s to load", webpageURL.href)
+      logger.info("waiting for web page at %s to load", webpageURL.href);
       await driver.wait(untilDelay(webpageLoadDelay));
 
       // take a screenshot, so we can visually inspect the web page being scanned
@@ -43,17 +44,18 @@ async function scan(webpages: Array<string>) {
 
       for (const idx in scripts) {
         let innerHTML: string = await scripts[idx].getAttribute("innerHTML");
-        let src: string = await scripts[idx].getAttribute("src");
+        let src: string = (await scripts[idx].getAttribute("src")).trim();
         let srcURL: URL = src ? new URL(src) : webpageURL;
         let fileName: string = `${idx}_inline`;
 
         // check for external script, i.e., `src` attribute is not empty
-        if (src.trim() !== "") {
-          const srcURL = new URL(src);
+        if (src) {
           const response = await fetch(src);
-
           innerHTML = await response.text();
-          fileName = srcURL.pathname.split("/").pop().replace(new RegExp(".js$"), "");
+          fileName = srcURL.pathname
+            .split("/")
+            .pop()
+            .replace(new RegExp(".js$"), "");
         }
 
         deobfuscateScript({
@@ -72,7 +74,9 @@ async function scan(webpages: Array<string>) {
   }
 }
 
-const sitesToScan: Array<string> = [
-  "http://example.com",
-];
-scan(sitesToScan);
+function main() {
+  const sitesToScan: Array<string> = ["http://example.com"];
+  scan(sitesToScan);
+}
+
+main();
