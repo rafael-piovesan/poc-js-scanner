@@ -44,9 +44,9 @@ async function scan(webpages: Array<string>) {
 
       for (const idx in scripts) {
         let innerHTML: string = await scripts[idx].getAttribute("innerHTML");
-        let src: string = (await scripts[idx].getAttribute("src")).trim();
-        let srcURL: URL = src ? new URL(src) : webpageURL;
-        let fileName: string = `${idx}_inline`;
+        const src: string = (await scripts[idx].getAttribute("src")).trim();
+        const srcURL: URL = src ? new URL(src) : webpageURL;
+        let fileName = `${idx}_inline`;
 
         // check for external script, i.e., `src` attribute is not empty
         if (src) {
@@ -82,7 +82,7 @@ function main() {
   const args = process.argv.slice(2);
   if (args.length) {
     sitesToScan = args
-  };
+  }
 
   scan(sitesToScan);
 }

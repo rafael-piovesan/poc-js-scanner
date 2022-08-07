@@ -29,7 +29,7 @@ import { Options as ChromeOptions } from "selenium-webdriver/chrome.js";
    */
   export function untilDocumentReady(): Condition<boolean> {
     return new Condition("wait document to be ready", async (driver) => {
-      let state = (
+      const state = (
         await driver.executeScript("return document.readyState")
       ).toString();
       return state === "complete";
