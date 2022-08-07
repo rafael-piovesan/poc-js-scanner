@@ -75,7 +75,15 @@ async function scan(webpages: Array<string>) {
 }
 
 function main() {
-  const sitesToScan: Array<string> = ["http://example.com"];
+  // default list of web pages to scan
+  let sitesToScan: Array<string> = ["https://www.google.com"];
+
+  // check for values passed as arguments
+  const args = process.argv.slice(2);
+  if (args.length) {
+    sitesToScan = args
+  };
+
   scan(sitesToScan);
 }
 
