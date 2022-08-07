@@ -31,7 +31,7 @@ async function scan(webpages: Array<string>) {
       await driver.wait(untilDelay(webpageLoadDelay));
 
       // take a screenshot, so we can visually inspect the web page being scanned
-      takeScreenshot(driver);
+      await takeScreenshot(driver);
 
       // enqueue all iframes to be scanned as well
       const iframes: WebElement[] = await driver.findElements(By.css("iframe"));
