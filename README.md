@@ -10,9 +10,18 @@ This projects depends on [TestContainers](https://github.com/testcontainers/test
 ```bash
 npm i
 ```
-- Set the web pages to be scanned at [main.ts](src/main.ts#L76).
-- Finally run the code:
+- Finally run the code, passing the web page's URL as argument like this:
 ```bash
-npm run start
+npm run start -- http://www.google.com
 ```
 - When it's finished, checkout the `output` folder, which is where the scripts will be saved. Also, take a look at the `screenshots` directory for inspecting if the web page was loaded successfully during the scan.
+
+## Further work
+From this point on, the idea is to research ways of actually detecting malicious code. Below is a list of interesting approaches.
+
+### Static Analysis
+- https://github.com/VirusTotal/yara
+- https://yara.readthedocs.io/en/stable/
+
+## ML Analysis
+- https://towardsai.net/p/l/detect-malicious-javascript-code-using-machine-learning
