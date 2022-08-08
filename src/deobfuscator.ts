@@ -36,11 +36,24 @@ const deobfuscationConfig = {
  * it was found.
  */
 export function deobfuscateScript(param: Script): void {
+  if (!param.script) {
+    logger.warn(`received empty script [${param.filename}] from [${param.hostname}]`)
+    return
+  }
+
   try {
     const output = deobfuscate(param.script, deobfuscationConfig);
-    mkdirSync(`output/${param.webpage}/${param.hostname}`, { recursive: true });
-    writeFileSync(`output/${param.webpage}/${param.hostname}/${param.filename}.js`, output);
+    param.script = output;
   } catch (e) {
+    param.filename = `original_${param.filename}`;
     logger.warn(`could not deobfuscate script from [${param.hostname}]`, e);
+  }
+
+  try {
+    const saveToDir = `output/${param.webpage}/${param.hostname}`;
+    mkdirSync(saveToDir, { recursive: true });
+    writeFileSync(`${saveToDir}/${param.filename.replace(/.js$/, "")}.js`, param.script);
+  } catch(e) {
+    logger.error(`could not save script [${param.filename}] from [${param.hostname}]`, e)
   }
 }

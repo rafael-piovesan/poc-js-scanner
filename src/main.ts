@@ -36,7 +36,7 @@ async function scan(webpages: Array<string>) {
       // enqueue all iframes to be scanned as well
       const iframes: WebElement[] = await driver.findElements(By.css("iframe"));
       iframes.forEach(async (i) => {
-        const src = await i.getAttribute("src");
+        const src = (await i.getAttribute("src"))?.trim();
         if (src) webpages.push(src);
       });
 
@@ -44,7 +44,7 @@ async function scan(webpages: Array<string>) {
 
       for (const idx in scripts) {
         let innerHTML: string = await scripts[idx].getAttribute("innerHTML");
-        const src: string = (await scripts[idx].getAttribute("src")).trim();
+        const src: string = (await scripts[idx].getAttribute("src"))?.trim();
         const srcURL: URL = src ? new URL(src) : webpageURL;
         let fileName = `${idx}_inline`;
 
@@ -52,10 +52,7 @@ async function scan(webpages: Array<string>) {
         if (src) {
           const response = await fetch(src);
           innerHTML = await response.text();
-          fileName = srcURL.pathname
-            .split("/")
-            .pop()
-            .replace(new RegExp(".js$"), "");
+          fileName = srcURL.pathname.split("/").pop();
         }
 
         deobfuscateScript({
@@ -76,15 +73,15 @@ async function scan(webpages: Array<string>) {
 
 function main() {
   // default list of web pages to scan
-  let sitesToScan: Array<string> = ["https://www.google.com"];
+  let pagesToScan: Array<string> = ["https://www.google.com"];
 
   // check for values passed as arguments
   const args = process.argv.slice(2);
   if (args.length) {
-    sitesToScan = args
+    pagesToScan = args;
   }
 
-  scan(sitesToScan);
+  scan(pagesToScan);
 }
 
 main();
