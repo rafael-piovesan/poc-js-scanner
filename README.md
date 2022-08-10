@@ -14,14 +14,33 @@ npm i
 ```bash
 npm run start -- http://www.google.com
 ```
-- When it's finished, checkout the `output` folder, which is where the scripts will be saved. Also, take a look at the `screenshots` directory for inspecting if the web page was loaded successfully during the scan.
+- When it's finished, checkout the `output` folder, which is where the scripts will be saved. Also, take a look at the `screenshots` directory to confirm if web pages were loaded successfully during the scraping.
+- From here on, it's possible to inspect the files manually or using [Yara](https://yara.readthedocs.io/en/stable).
+- To do that create new rules following the sample file provided in [yara_rules/google.yara](yara_rules/google.yara).
+- Yara can be installed locally using [Brew](https://brew.sh/) (see [here](https://yara.readthedocs.io/en/stable/gettingstarted.html#compiling-and-installing-yara) for other options):
+```bash
+brew install yara
+```
+- Alternatively, there's also a Dockerfile to provide an easier way:
+```bash
+# build the image
+docker build --target yara . -f docker/yara.dockerfile -t yara
+```
+- Finally, scan the files using it:
+```bash
+# when using Docker image, first create a container
+docker run --rm -it -v $(pwd)/yara_rules:/rules -v $(pwd)/output:/files yara
+
+# then run Yara
+yara -m yara_rules/*.yara -r output
+```
 
 ## Further work
 From this point on, the idea is to research ways for actually detecting malicious code. Below is a list of interesting approaches.
 
 ### Static Analysis
 - https://github.com/VirusTotal/yara
-- https://yara.readthedocs.io/en/stable/
+- https://yara.readthedocs.io/en/stable
 
 ### ML Analysis
 - https://towardsai.net/p/l/detect-malicious-javascript-code-using-machine-learning
